@@ -1,0 +1,8 @@
+{
+    "открыть":{
+        "браузер":{
+            "command": "start www.rosatom.ru"
+        }
+
+    }
+}
