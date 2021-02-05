@@ -2,7 +2,6 @@
     "открыть":{
         "браузер": "startbrowser"
     },
-    "hello": "helloworld",
     "покажи":{
         "погоду": "weather"
     }
