@@ -1,6 +1,8 @@
 import json
 import os
+import pymorphy2
 from scripts.script import *
+morph = pymorphy2.MorphAnalyzer()
 
 with open(
     os.path.dirname(os.path.abspath(__file__)) + 
@@ -10,10 +12,32 @@ with open(
 
 
 def run_command(command):
+
+    def lemmatizing(command):
+        lemma_command = []
+        for word in command:
+            lemma_word = morph.parse(word)[0].normal_form
+            lemma_command.append(lemma_word)
+        return lemma_command
+
+    def find_command(words,lemma_words,commands,lemma_command):
+        for word in lemma_words:
+            if word in lemma_command:
+                return commands[words[lemma_words.index(word)]]
+
+    global commands
+    command = lemmatizing(command.split(" "))
+    while True:
+        if type(commands) == str:
+            break
+        else:
+            words = [word for word in commands]
+            lemma_words = lemmatizing(commands)
+            commands = find_command(words,lemma_words,commands,command)
+            commands = list(commands.values())[0]
+
     try:
-        command = command.split(" ")
-        if len(command) < 3:
-            exec(commands[command[0]][command[1]]+"()")
+        exec(commands+'()')
     except:
         return {"type": "text", "data": "Команда не может быть выполнена"}
 
