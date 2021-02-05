@@ -131,3 +131,4 @@ dmypy.json
 
 .vscode
 HackAtom_Data/
+.idea/

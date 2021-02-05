@@ -1,8 +1,14 @@
 {
     "открыть":{
         "браузер":{
-            "command": "start www.rosatom.ru"
+            "command": "startbrowser"
         }
 
+    },
+    "hello": "helloworld",
+    "покажи":{
+        "погоду": {
+            "command": "weather"
+        }
     }
 }
