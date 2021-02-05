@@ -10,10 +10,12 @@ from random import randrange
 import os
 import datetime
 import time
+from commands.command import *
 
 WAVE_OUTPUT_FILENAME = "ASR/audio/words.wav"
 ROMA = False
 def goCommand(text):
+    run_command(text)
     print(text)
 
 

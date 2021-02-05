@@ -4,7 +4,7 @@ from scripts.script import *
 
 with open(
     os.path.dirname(os.path.abspath(__file__)) + 
-    "\command.json", "r", 
+    "\commands.json", "r", 
     encoding="utf-8") as f:
     commands = json.load(f)
 

@@ -1,4 +1,4 @@
-from ASR.asr import SpeechToText
+from ASR.ASR import SpeechToText
 
 Record = SpeechToText()
 Record.start()
