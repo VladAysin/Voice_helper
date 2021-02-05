@@ -1,14 +1,9 @@
 {
     "открыть":{
-        "браузер":{
-            "command": "startbrowser"
-        }
-
+        "браузер": "startbrowser"
     },
     "hello": "helloworld",
     "покажи":{
-        "погоду": {
-            "command": "weather"
-        }
+        "погоду": "weather"
     }
 }

@@ -1,16 +1,19 @@
 import json
 import os
-from Backend.commands.scripts.script import *
+from scripts.script import *
 
-with open("./command.json", "r", encoding="utf-8") as f:
+with open(
+    os.path.dirname(os.path.abspath(__file__)) + 
+    "\command.json", "r", 
+    encoding="utf-8") as f:
     commands = json.load(f)
 
 
-def run_command(command, **kwargs):
+def run_command(command):
     try:
         command = command.split(" ")
         if len(command) < 3:
-            exec(commands[command[0]][command[1]]["command"]+"()")
+            exec(commands[command[0]][command[1]]+"()")
     except:
         return {"type": "text", "data": "Команда не может быть выполнена"}
 

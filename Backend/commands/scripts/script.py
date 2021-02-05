@@ -17,5 +17,3 @@ def weather():
     answer = r["main"]
     answer.update(r["weather"][0])
     print("requests\n",answer)
-    print('something')
-    print('another something')
