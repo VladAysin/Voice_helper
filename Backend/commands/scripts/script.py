@@ -32,9 +32,10 @@ def launchProgramm(program:str):
         elif program in programs["browser"] :
             program = "https://rosatom.ru/"
         os.system(f"start {program}")
+        return 1
     except Exception as err:
         print("Error",err)
-    return None
+        return 0
 
 def xls_analysis(command):
     global status
