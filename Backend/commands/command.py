@@ -41,7 +41,7 @@ def run_command(command):
 
     command = find_command(command,commands)
     try:
-        print(command()) 
+        return command() 
     except:
         return {"type": "text", "data": "Команда не может быть выполнена"}
 
