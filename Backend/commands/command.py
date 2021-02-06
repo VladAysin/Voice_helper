@@ -38,6 +38,7 @@ def run_command(command):
     for word in lemmatizing(analysis):
         if word in command:
             return xls_analysis(command)
+
     command = find_command(command,commands)
     try:
         return command()

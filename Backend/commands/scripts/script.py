@@ -67,11 +67,11 @@ def launchProgramm(program:str):
         print(err,"\n",tbinfo,)
         return 1
 
-def xls_analysis(command):
+def xls_analysis(command,path='./folder'):
     global status
     dict_all = {}
     try:
-        for info in os.walk('./folder'):
+        for info in os.walk(path):
             for xls_name in info[-1]:
                 try:
                     xls = pd.read_html(info[0]+'/'+xls_name)
@@ -125,7 +125,7 @@ def find_file_on_fs(file_name,path=''):
             list_files.append(dict_drives[path].result)
         except:
             continue
-        
+
     dict_files = {file_name:list_files}
 
     return dict_files
