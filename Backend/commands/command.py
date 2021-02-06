@@ -1,14 +1,11 @@
 import json
 import os
+import types
 import pymorphy2
-from scripts.script import *
+from commands import *
 morph = pymorphy2.MorphAnalyzer()
 
-with open(
-    os.path.dirname(os.path.abspath(__file__)) + 
-    "\commands.json", "r", 
-    encoding="utf-8") as f:
-    commands = json.load(f)
+commands = dict_commands
 
 
 def run_command(command):
@@ -23,7 +20,7 @@ def run_command(command):
     def find_command(our_command,commands):
         while True:
             
-            if type(commands) == str:
+            if type(commands) == types.FunctionType:
                 break
             else:
                 words = [word for word in commands]
@@ -31,7 +28,7 @@ def run_command(command):
                 for word in lemma_words:
                     if word in our_command:
                         commands = commands[words[lemma_words.index(word)]]
-
+                
                 commands = list(commands.values())[0]
         return commands
 
@@ -40,7 +37,7 @@ def run_command(command):
     command = lemmatizing(command.split(" "))
     command = find_command(command,commands)
     try:
-        exec(command+'()')
+        return command()
     except:
         return {"type": "text", "data": "Команда не может быть выполнена"}
 

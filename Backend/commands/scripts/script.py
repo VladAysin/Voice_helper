@@ -17,6 +17,7 @@ def weather():
     answer = r["main"]
     answer.update(r["weather"][0])
     print(answer)
+    return answer
 
 def launchProgramm(program:str):
     programs = {
