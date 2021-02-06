@@ -8,18 +8,20 @@ import ast
 from threading import Thread
 from random import randrange
 import os
-import datetime
 import time
 
 from commands.command import *
 
-WAVE_OUTPUT_FILENAME = "ASR/audio/words.wav"
 ROMA = False
 RESULT = ''
 DATA = []
+#DATASEND = []
 OK = [False, 0]
 
 class MyTimer(Thread):
+    '''
+    Custom Timer class for len of speech command
+    '''
     def __init__(self):
         Thread.__init__(self) 
     def run(self):
@@ -32,46 +34,49 @@ mytimer = MyTimer()
 
 
 def goCommand(text):
-    global OK
-    global DATA
-    global RESULT
-
-    DATA = text
-    OK[0] = True
-    print(text)
-    RESULT = run_command(text)
+    print('command: ', text)
+    run_command(text)
 
 def createCommand(text):
     global ROMA
     global OK
     global DATA
 
-    if OK[1] >= 3:
+    if OK[1] >= 3 and DATA != []:
         ROMA = False
-        #mytimer.stop()
+        goCommand(' '.join(DATA))
+        DATA = []
+        OK[1] = 0
     if text != '':
         DATA.append(text)
+        #DATASEND.append(text)
+        OK[0] = True
     else:
         OK[1] +=1
-    OK[0] = True
 
 def getResult():
     global RESULT
     r = RESULT
     if r:
         RESULT = ''
-        return True, r
-    return False, ''
+        return [True, r]
+    return [False, '']
 
 def getResultCommand():
     global OK
+    #global DATASEND
+    #data = DATASEND.copy
+    #DATASEND = []
     if OK[0]:
         OK[0] = False
-        return True, DATA
-    return False, ''  
+        return [True, DATA]
+    return [False, '']
 
 
 class Recognition(Thread):
+    '''
+    Class in same thread for send audio frame to our ASR
+    '''
     def __init__(self,name,url,asr):
         Thread.__init__(self)
         self.name = name
@@ -86,20 +91,19 @@ class Recognition(Thread):
         try:
             r = requests.post(self.asr, files=multiple_files)
         except:
-            print('error,{multiple_files} , {self.asr}')
+            print('error: ,{multiple_files} , {self.asr}')
         wav.close()
         os.remove(self.url) 
         try:
             result = ast.literal_eval(r.text)['r'][0]['response'][0]['text']
             if 'рома' in result and not(ROMA):
                 ROMA = True
-                #mytimer.start()
+                mytimer.start()
             if ROMA:
-                goCommand(result)
-            #print('F _____',result)
+                createCommand(result)
+            #print('F ===============',result)
         except:
-            pass
-            #print(r.text)
+            print('error: {r}')
         #self.text = ast.literal_eval(r.text)['r'][0]['response'][0]['text']
 
 class SpeechToText(Thread):
@@ -127,10 +131,9 @@ class SpeechToText(Thread):
         self.min_silence_len=100
 
         self.url_asr = urlASR
-
-        self.Timer = 0
         self.ok = False
-        self.data = ''
+        self.stopFlag = False
+
     def run(self):
         global ROMA
         CHUNK = 1024
@@ -149,7 +152,8 @@ class SpeechToText(Thread):
         print("Recording...")
         frames = []
         ok = 0
-        while True:
+        split = 0
+        while not(self.stopFlag):
 
             for _ in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
                 data = stream.read(CHUNK)
@@ -167,7 +171,7 @@ class SpeechToText(Thread):
                 silence_thresh=self.silence_thresh
             )
             #print(len(frames),audio_chunks)
-            if len(audio_chunks) != 0:
+            if len(audio_chunks) != 0 or split:
                 if (audio_chunks[0][1] < 488 and len(audio_chunks) == 1):
                     continue
                 if (audio_chunks[0][1] < 488 and len(audio_chunks) >= 2) or ok:
@@ -210,7 +214,12 @@ class SpeechToText(Thread):
                 frames = []
                 ok = 0
             else:
-                ok = 1
+                if len(frames) < 2000:
+                    ok = 1
+                    split = 0
+                else:
+                    ok = 0
+                    split = 1
     
         stream.stop_stream()
         stream.close()
