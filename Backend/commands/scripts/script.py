@@ -74,7 +74,6 @@ def xls_analysis(command):
                     e = sys.exc_info()[2]
                     tbinfo = traceback.format_tb(e)[0]
                     print(err,"\n",tbinfo,)
-                    print("Error",err)
                     continue
         return dict_all
     except Exception as err:
