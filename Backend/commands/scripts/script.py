@@ -1,5 +1,6 @@
 from threading import Thread
 from queue import Queue
+from datetime import datetime
 import win32api
 import os
 import pandas as pd
@@ -10,9 +11,7 @@ from cleantext import clean
 import pdfplumber
 import glob
 import re
-from threading import Thread
-from queue import Queue
-status = ['работа','дефект','наряд','резерв']
+status = np.array(['работа','дефект','наряд','резерв'])
 queue = Queue()
 
 class Find_file(Thread):
@@ -29,6 +28,19 @@ class Find_file(Thread):
                 self.result = info[0]+ "\\" + self.file_name
         queue.task_done()
 
+
+def date_time():
+    date = datetime.now()
+    date_now = {
+        'year': date.year,
+        'month': date.month,
+        'day': date.day,
+        'hour': date.hour,
+        'minute': date.minute,
+        'second': date.second
+    }
+    
+    return date_now
 
 def helloworld(a, b):
     print("hello world", a, b)
@@ -73,7 +85,7 @@ def launchProgramm(program:str):
         print(err,"\n",tbinfo,)
         return 1
 
-def xls_analysis(command,path='./folder'):
+def xls_analysis(command,path='./xls'):
     global status
     dict_all = {}
     try:
@@ -85,7 +97,7 @@ def xls_analysis(command,path='./folder'):
                     df.columns = df.loc[0,:].to_list()
                     df = df.loc[1:,:].reset_index(drop=True)
                     df['Состояние'] = pd.Series()
-                    df['Состояние'] = np.random.choice(status,len(df))
+                    df['Состояние'] = np.random.choice(len(status),len(df))
                     if 'список' in command:
                         dict_spisok = {'Столбцы':['Описание',"Состояние"]}
                         desc = df['Описание'].to_dict()

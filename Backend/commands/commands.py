@@ -4,6 +4,7 @@ dict_commands = {
         "браузер": startbrowser
     },
     "покажи":{
-        "погоду": weather
+        "погоду": weather,
+        "время": date_time
     }
 }

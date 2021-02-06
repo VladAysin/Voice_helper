@@ -7,7 +7,6 @@ morph = pymorphy2.MorphAnalyzer()
 
 commands = dict_commands
 
-
 def run_command(command):
 
     def lemmatizing(command):
@@ -23,13 +22,14 @@ def run_command(command):
             if type(commands) == types.FunctionType:
                 break
             else:
+                
                 words = [word for word in commands]
                 lemma_words = lemmatizing(commands)
                 for word in lemma_words:
                     if word in our_command:
                         commands = commands[words[lemma_words.index(word)]]
-                
-                commands = list(commands.values())[0]
+                        our_command.remove(word)
+
         return commands
 
     global commands
@@ -41,7 +41,7 @@ def run_command(command):
 
     command = find_command(command,commands)
     try:
-        return command()
+        print(command()) 
     except:
         return {"type": "text", "data": "Команда не может быть выполнена"}
 
