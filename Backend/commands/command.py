@@ -8,7 +8,7 @@ morph = pymorphy2.MorphAnalyzer()
 commands = dict_commands
 
 
-def run_command(command):
+def run_command(command, config):
 
     def lemmatizing(command):
         lemma_command = []

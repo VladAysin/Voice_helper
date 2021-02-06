@@ -9,8 +9,12 @@ from threading import Thread
 from random import randrange
 import os
 import time
-
 from commands.command import *
+
+import configparser
+
+config = configparser.ConfigParser()  # создаём объекта парсера
+config.read("config.ini")
 
 ROMA = False
 RESULT = ''
@@ -35,7 +39,7 @@ mytimer = MyTimer()
 
 def goCommand(text):
     print('command: ', text)
-    run_command(text)
+    run_command(text, config)
 
 def createCommand(text):
     global ROMA
@@ -119,7 +123,7 @@ class SpeechToText(Thread):
     Channel 1;
     int 16 bit;
     '''
-    def __init__(self, urlASR = 'http://10.11.17.13:8888/asr'):
+    def __init__(self,):
         Thread.__init__(self)
         self.CHUNK = 1024
         self.FORMAT = pyaudio.paInt16
@@ -130,7 +134,7 @@ class SpeechToText(Thread):
         self.silence_thresh=-44
         self.min_silence_len=100
 
-        self.url_asr = urlASR
+        self.url_asr = config['ASR']['url']
         self.ok = False
         self.stopFlag = False
 
