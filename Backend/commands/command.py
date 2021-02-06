@@ -2,7 +2,7 @@ import json
 import os
 import types
 import pymorphy2
-from commands import *
+from .commands import *
 morph = pymorphy2.MorphAnalyzer()
 
 commands = dict_commands
