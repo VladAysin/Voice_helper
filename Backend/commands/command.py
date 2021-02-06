@@ -38,7 +38,10 @@ def run_command(command, config):
     for word in lemmatizing(analysis):
         if word in command:
             return xls_analysis(command)
-
+    file_found = ['файл']
+    for word in lemmatizing(file_found):
+        if word in command:
+            return find_file_on_fs('flag.txt')
     command = find_command(command,commands)
     try:
         return command() 
