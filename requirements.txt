@@ -1,6 +1,11 @@
-pyttsx3
-SpeechRecognition
-fuzzywuzzy
-PyAudio
-pydub
-websockets
+"pyttsx3",
+"PyAudio",
+"pydub",
+"websockets",
+"pywin32",
+"pandas",
+"numpy",
+"clean-text",
+"pdfplumber",
+"pymorphy2",
+"configparser",
