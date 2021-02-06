@@ -1,3 +1,6 @@
+from threading import Thread
+from queue import Queue
+import win32api
 import os
 import pandas as pd
 import numpy as np
@@ -10,7 +13,21 @@ import re
 from threading import Thread
 from queue import Queue
 status = ['работа','дефект','наряд','резерв']
+queue = Queue()
 
+class Find_file(Thread):
+    def __init__(self,drive,file_name):
+        Thread.__init__(self)
+        self.drive = drive
+        self.file_name = file_name
+        self.list_dirs = []
+
+    def run(self):
+        self.list_dirs = list(os.walk(self.drive))
+        for info in self.list_dirs:
+            if self.file_name in info[-1]:
+                self.result = info[0]+ "\\" + self.file_name
+        queue.task_done()
 
 
 def helloworld(a, b):
@@ -87,6 +104,38 @@ def xls_analysis(command):
         tbinfo = traceback.format_tb(e)[0]
         print(err,"\n",tbinfo,)
         return 1
+
+
+def find_file_on_fs(file_name,path=''):
+    if path == '':
+        drives = win32api.GetLogicalDriveStrings()
+        drives = drives.split('\000')[:-1] 
+    else:
+        drives = [path]
+    dict_drives = {}
+    try:
+        for path in drives:
+            dict_drives.update({path:Find_file(path,file_name)})
+            queue.put(dict_drives[path].start())
+    except Exception as err:
+        e = sys.exc_info()[2]
+        tbinfo = traceback.format_tb(e)[0]
+        print(err,"\n",tbinfo,)
+        return 1
+
+    queue.join()
+
+    list_files = []
+    for path in drives:
+        try:
+            list_files.append(dict_drives[path].result)
+        except:
+            continue
+        
+    dict_files = {file_name:list_files}
+
+    return dict_files
+
 
 def readPDF(path:str):
     try:
