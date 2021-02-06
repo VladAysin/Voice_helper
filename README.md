@@ -20,6 +20,15 @@
 
 ## Сборка и запуск
 
+## Установка зависимостей python
+`pip install -r requirements.txt`
+
+Так как нам необходимо слушать микрофон, необходимо установить модуль PyAudio.  
+В оффицаильных репозиториях для Windows его нет, поэтому необходимо сказать неофициальную сборку по ссылке  
+`https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio`
+После загрузки делаем  
+`pip install <название_скачанного_пакета>`
+
 ### Часть серверная (SOVA ASR)
 - https://github.com/sovaai/sova-asr
 
@@ -27,5 +36,3 @@
 Требования:
 - Python 3.8.6 (64 bit)
 - Windows 10
-1) pip install -r requirements.txt
-2) Запуск app.py
