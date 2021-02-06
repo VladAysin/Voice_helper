@@ -2,3 +2,5 @@ pyttsx3
 SpeechRecognition
 fuzzywuzzy
 PyAudio
+pydub
+websockets

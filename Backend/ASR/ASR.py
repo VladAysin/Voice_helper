@@ -10,14 +10,14 @@ from random import randrange
 import os
 import datetime
 import time
+
 from commands.command import *
 
 WAVE_OUTPUT_FILENAME = "ASR/audio/words.wav"
 ROMA = False
-def goCommand(text):
-    run_command(text)
-    print(text)
-
+RESULT = ''
+DATA = []
+OK = [False, 0]
 
 class MyTimer(Thread):
     def __init__(self):
@@ -27,6 +27,49 @@ class MyTimer(Thread):
         time.sleep(20)
         #print('END')
         ROMA = False
+
+mytimer = MyTimer()
+
+
+def goCommand(text):
+    global OK
+    global DATA
+    global RESULT
+
+    DATA = text
+    OK[0] = True
+    print(text)
+    RESULT = run_command(text)
+
+def createCommand(text):
+    global ROMA
+    global OK
+    global DATA
+
+    if OK[1] >= 3:
+        ROMA = False
+        #mytimer.stop()
+    if text != '':
+        DATA.append(text)
+    else:
+        OK[1] +=1
+    OK[0] = True
+
+def getResult():
+    global RESULT
+    r = RESULT
+    if r:
+        RESULT = ''
+        return True, r
+    return False, ''
+
+def getResultCommand():
+    global OK
+    if OK[0]:
+        OK[0] = False
+        return True, DATA
+    return False, ''  
+
 
 class Recognition(Thread):
     def __init__(self,name,url,asr):
@@ -40,16 +83,17 @@ class Recognition(Thread):
         #print(self.url)
         wav = open(self.url, 'rb')
         multiple_files = [('audio_blob', (self.url, wav, 'sound/wav'))]
-        r = requests.post(self.asr, files=multiple_files)
+        try:
+            r = requests.post(self.asr, files=multiple_files)
+        except:
+            print('error,{multiple_files} , {self.asr}')
         wav.close()
         os.remove(self.url) 
         try:
             result = ast.literal_eval(r.text)['r'][0]['response'][0]['text']
             if 'рома' in result and not(ROMA):
                 ROMA = True
-                t=MyTimer()
-                t.start()
-                #print('start')
+                #mytimer.start()
             if ROMA:
                 goCommand(result)
             #print('F _____',result)
@@ -79,12 +123,14 @@ class SpeechToText(Thread):
         self.RATE = 44100
         self.RECORD_SECONDS = 0.5
 
-        self.silence_thresh=-52
+        self.silence_thresh=-44
         self.min_silence_len=100
 
         self.url_asr = urlASR
 
         self.Timer = 0
+        self.ok = False
+        self.data = ''
     def run(self):
         global ROMA
         CHUNK = 1024
@@ -165,7 +211,7 @@ class SpeechToText(Thread):
                 ok = 0
             else:
                 ok = 1
-
+    
         stream.stop_stream()
         stream.close()
         p.terminate()
