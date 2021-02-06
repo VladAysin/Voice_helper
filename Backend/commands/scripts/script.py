@@ -1,5 +1,7 @@
 import os
-
+import pandas as pd
+import numpy as np
+status = ['работа','дефект','наряд','резерв']
 
 def helloworld(a, b):
     print("hello world", a, b)
@@ -34,7 +36,25 @@ def launchProgramm(program:str):
         print("Error",err)
     return None
 
-            
+def xls_analysis(command):
+    global status
+    dict_all = {}
+    for info in os.walk('./folder'):
+        for xls_name in info[-1]:
+            xls = pd.read_html(info[0]+'/'+xls_name)
+            df = pd.DataFrame(xls[0])
+            df.columns = df.loc[0,:].to_list()
+            df = df.loc[1:,:].reset_index(drop=True)
+            df['Состояние'] = pd.Series()
+            df['Состояние'] = np.random.choice(status,len(df))
+            if 'список' in command:
+                dict_spisok = {'Столбцы':['Описание',"Состояние"]}
+                desc = df['Описание'].to_dict()
+                status = df['Состояние'].to_dict()
+                for i in desc:
+                    dict_spisok.update({i:[desc[i],status[i]]})
+            dict_all.update({info[0]+'/'+xls_name:dict_spisok})
+    return dict_all
 
 
 if __name__ == "__main__":

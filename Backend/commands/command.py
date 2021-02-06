@@ -33,12 +33,15 @@ def run_command(command):
         return commands
 
     global commands
-
     command = lemmatizing(command.split(" "))
+    analysis = ["оборудование","состояние"]
+    for word in lemmatizing(analysis):
+        if word in command:
+            return xls_analysis(command)
     command = find_command(command,commands)
     try:
         return command()
     except:
         return {"type": "text", "data": "Команда не может быть выполнена"}
 
-run_command("покажи погоду")
+run_command("покажи список оборудования")
