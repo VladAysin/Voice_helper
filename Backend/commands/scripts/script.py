@@ -71,9 +71,13 @@ def xls_analysis(command):
                             dict_spisok.update({i:[desc[i],status[i]]})
                     dict_all.update({info[0]+'/'+xls_name:dict_spisok})
                 except Exception as err:
+<<<<<<< HEAD
                     e = sys.exc_info()[2]
                     tbinfo = traceback.format_tb(e)[0]
                     print(err,"\n",tbinfo,)
+=======
+                    print("Error",err)
+>>>>>>> de66e23661d732812e9d3d02cb702c4973544eee
                     continue
         return dict_all
     except Exception as err:
