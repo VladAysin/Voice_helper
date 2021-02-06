@@ -15,7 +15,6 @@ class Find_file(Thread):
         self.drive = drive
         self.file_name = file_name
         self.list_dirs = []
-        self.result = ''
 
     def run(self):
         self.list_dirs = list(os.walk(self.drive))
@@ -108,15 +107,25 @@ def find_file_on_fs(file_name,path=''):
     else:
         drives = [path]
     dict_drives = {}
-    
-    for path in drives:
-        dict_drives.update({path:Find_file(path,file_name)})
-        queue.put(dict_drives[path].start())
+    try:
+        for path in drives:
+            dict_drives.update({path:Find_file(path,file_name)})
+            queue.put(dict_drives[path].start())
+    except Exception as err:
+        e = sys.exc_info()[2]
+        tbinfo = traceback.format_tb(e)[0]
+        print(err,"\n",tbinfo,)
+        return 1
+
     queue.join()
 
     list_files = []
     for path in drives:
-        list_files.append(dict_drives[path].result)
+        try:
+            list_files.append(dict_drives[path].result)
+        except:
+            continue
+        
     dict_files = {file_name:list_files}
 
     return dict_files
