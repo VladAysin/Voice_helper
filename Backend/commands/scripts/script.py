@@ -6,6 +6,12 @@ import pandas as pd
 import numpy as np
 import sys
 import traceback
+from cleantext import clean
+import pdfplumber
+import glob
+import re
+from threading import Thread
+from queue import Queue
 status = ['работа','дефект','наряд','резерв']
 queue = Queue()
 
@@ -134,7 +140,13 @@ def find_file_on_fs(file_name,path=''):
 def readPDF(path:str):
     try:
         if path.lower().endswith(".pdf"):
-            pass
+            with pdfplumber.open(path) as pdf:
+                if (len(pdf.pages)):
+                    text = " ".join([
+                        page.extract_text() or " " for page in pdf.pages if page
+                    ])
+            clear_text = clean(text, lang='ru', lower=False, to_ascii=False)
+            return clear_text
 
         else:
             return 1
@@ -145,6 +157,51 @@ def readPDF(path:str):
         print(err,"\n",tbinfo,)
         return 1
 
+    
+def findInPDF(text,path):
+
+
+    class FindInPDF(Thread):
+        def __init__(self,path,text,result):
+            super(FindInPDF,self).__init__()
+            self.path = path
+            self.text = text
+            self.result = result
+
+        def run(self):
+            text1 = readPDF(file)
+            if re.findall(text,text1,flags=re.IGNORECASE):
+                self.result.append(file)
+            q.task_done()
+
+
+    try:
+
+   
+        files = [
+            glob.glob(os.path.join(folder[0],"*.pdf"))
+            for folder in os.walk(path)
+            if glob.glob(os.path.join(folder[0],"*.pdf"))
+        ][0]
+        result = []
+        q = Queue()
+        for file in files:
+            thread = FindInPDF(path,text,result)
+            q.put(thread.start())
+        
+        q.join()
+        if result:
+            print(result)      
+    except Exception as err:
+        e = sys.exc_info()[2]
+        tbinfo = traceback.format_tb(e)[0]
+        print(err,"\n",tbinfo,)
+        return 1  
+
+    
+
 
 if __name__ == "__main__":
-    weather()
+    # readPDF("D:\\project\\Voice_helper\\Backend\\HackAtom_Data\\pdf_material\\01.pdf")
+    findInPDF("вплоть до полного разрушения","D:\\project\\Voice_helper\\Backend\\HackAtom_Data\\")
+
