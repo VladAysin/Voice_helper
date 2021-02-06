@@ -2,65 +2,61 @@ from ASR.ASR import SpeechToText, getResult, getResultCommand
 import websockets
 import asyncio
 import time
+import json
 from threading import Thread
 
 Record = SpeechToText()
 Record.start()
 
-class Connect():
-    def __init__(self):
-        self.connected = set()
-        self.data = ''
-        self.stopFlag = False
-
-    async def handler(self, websocket, path):
-        self.connected.add(websocket)
-        try:
-            print('OK')
-            name = await websocket.recv()
-            greeting = f"{name}!"
-            await websocket.send(greeting)
-            print(f"> {greeting}")
-
-            sendData = asyncio.ensure_future(self.sendData(websocket, path))
-
-            getData = asyncio.ensure_future(self.getData(websocket, path))
-
-            done, pending = await asyncio.wait([sendData, getData],return_when=asyncio.FIRST_COMPLETED,)
-
-            for task in pending:
-                task.cancel()
-        except:
-            print('error')
-
-    async def sendData(self, websocket, path):
+async def sendData(websocket):
+    try:
         while True:
-            try:
-                data = getResult()
-                result = getResultCommand()
-                if data[0] and data[1] != '':
-                    await websocket.send('{text:' + data[1]+'}')
-                elif result[0]:
-                    await websocket.send('{text:' + result[1]+'}')
-                time.sleep(0.1)
-            except:
-                print("Connnect error")
-    
-    async def getData(self, websocket, path):
+            await websocket.send(json.dumps(
+                    {'result': 'Biba'}, 
+                    ensure_ascii=False
+                    ))
+            data = getResultCommand()
+            result = getResult()
+            if data[0] and data[1] != '':
+                print('Send data:  ' + ' '.join(data[1]))
+                await websocket.send(json.dumps(
+                    {'result': str(' '.join(data[1]))}, 
+                    ensure_ascii=False
+                    ))
+            elif result[0]:
+                print('Sennd result: ', result[1])
+                await websocket.send(json.dumps(
+                    {'result': result[1]}, 
+                    ensure_ascii=False
+                    ))
+            await asyncio.sleep(1)
+    except:
+        print("Connnect error")
+    finally:
+        return asyncio.FIRST_COMPLETED
+
+async def getData(websocket):
+    try:
         while True:
             coro = await websocket.recv()
+            print(coro)
+    finally:
+        return asyncio.FIRST_COMPLETED
 
-
-
-sock = Connect()
-try:
+async def handler(websocket, path):
     print('Connect')
-    ws_server = websockets.serve(sock.handler, "10.11.17.2", 22150)
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(ws_server)
-    loop.run_forever()
+    send = asyncio.ensure_future(sendData(websocket))
+    get = asyncio.ensure_future(getData(websocket))
+    done, pending = await asyncio.wait([send, get],return_when=asyncio.FIRST_COMPLETED,)
+    for task in pending:
+        task.cancel()
+
+try:
+    ws_server = websockets.serve(handler, "10.11.17.2", 22100)
+    asyncio.get_event_loop().run_until_complete(ws_server)
+    asyncio.get_event_loop().run_forever()
 except KeyboardInterrupt:
-    stopFlag = True
+    Record.stopFlag = True
     #TODO: close ws server and loop correctely
     print("Exiting program...")
 

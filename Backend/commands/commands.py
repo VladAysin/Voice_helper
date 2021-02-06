@@ -1,4 +1,4 @@
-from scripts.script import *
+from .scripts.script import *
 dict_commands = {
     "открыть":{
         "браузер": startbrowser

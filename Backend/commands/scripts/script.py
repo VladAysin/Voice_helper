@@ -14,6 +14,20 @@ import re
 status = np.array(['работа','дефект','наряд','резерв'])
 queue = Queue()
 
+class FindInPDF(Thread):
+        def __init__(self,path,text,result):
+            super(FindInPDF,self).__init__()
+            self.path = path
+            self.text = text
+            self.result = result
+
+        def run(self):
+            text1 = readPDF(self.path)
+            if re.findall(self.text,text1,flags=re.IGNORECASE):
+                self.result.append(self.path)
+            queue.task_done()
+
+
 class Find_file(Thread):
     def __init__(self,drive,file_name):
         Thread.__init__(self)
@@ -169,39 +183,26 @@ def readPDF(path:str):
         print(err,"\n",tbinfo,)
         return 1
 
-    
+
+
 def findInPDF(text,path):
 
 
-    class FindInPDF(Thread):
-        def __init__(self,path,text,result):
-            super(FindInPDF,self).__init__()
-            self.path = path
-            self.text = text
-            self.result = result
-
-        def run(self):
-            text1 = readPDF(file)
-            if re.findall(text,text1,flags=re.IGNORECASE):
-                self.result.append(file)
-            q.task_done()
 
 
     try:
-
-   
+ 
         files = [
             glob.glob(os.path.join(folder[0],"*.pdf"))
             for folder in os.walk(path)
             if glob.glob(os.path.join(folder[0],"*.pdf"))
         ][0]
         result = []
-        q = Queue()
         for file in files:
-            thread = FindInPDF(path,text,result)
-            q.put(thread.start())
+            thread = FindInPDF(file,text,result)
+            queue.put(thread.start())
         
-        q.join()
+        queue.join()
         if result:
             print(result)      
     except Exception as err:
@@ -215,5 +216,5 @@ def findInPDF(text,path):
 
 if __name__ == "__main__":
     # readPDF("D:\\project\\Voice_helper\\Backend\\HackAtom_Data\\pdf_material\\01.pdf")
-    findInPDF("вплоть до полного разрушения","D:\\project\\Voice_helper\\Backend\\HackAtom_Data\\")
+    findInPDF("касается отсека аварийной выгрузки отработавших","D:\\project\\Voice_helper\\Backend\\HackAtom_Data\\")
 
