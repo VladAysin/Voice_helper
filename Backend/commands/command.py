@@ -7,7 +7,7 @@ morph = pymorphy2.MorphAnalyzer()
 
 commands = dict_commands
 
-def run_command(command):
+def run_command(command, config):
 
     def lemmatizing(command):
         lemma_command = []
@@ -44,5 +44,3 @@ def run_command(command):
         return command() 
     except:
         return {"type": "text", "data": "Команда не может быть выполнена"}
-
-run_command("покажи список оборудования")

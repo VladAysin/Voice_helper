@@ -5,16 +5,13 @@ import time
 import json
 from threading import Thread
 
+
 Record = SpeechToText()
 Record.start()
 
 async def sendData(websocket):
     try:
         while True:
-            await websocket.send(json.dumps(
-                    {'result': 'Biba'}, 
-                    ensure_ascii=False
-                    ))
             data = getResultCommand()
             result = getResult()
             if data[0] and data[1] != '':

@@ -9,8 +9,12 @@ from threading import Thread
 from random import randrange
 import os
 import time
-
 from commands.command import *
+
+import configparser
+
+config = configparser.ConfigParser()  # создаём объекта парсера
+config.read("config.ini")
 
 ROMA = False
 RESULT = ''
@@ -34,8 +38,9 @@ mytimer = MyTimer()
 
 
 def goCommand(text):
+    global RESULT
     print('command: ', text)
-    run_command(text)
+    RESULT = run_command(text, config)
 
 def createCommand(text):
     global ROMA
@@ -89,7 +94,7 @@ class Recognition(Thread):
         wav = open(self.url, 'rb')
         multiple_files = [('audio_blob', (self.url, wav, 'sound/wav'))]
         try:
-            r = requests.post(self.asr, files=multiple_files)
+            r = requests.post("http://10.11.17.13:8888/asr", files=multiple_files)
         except:
             print('error: ,{multiple_files} , {self.asr}')
         wav.close()
@@ -119,7 +124,7 @@ class SpeechToText(Thread):
     Channel 1;
     int 16 bit;
     '''
-    def __init__(self, urlASR = 'http://10.11.17.13:8888/asr'):
+    def __init__(self,):
         Thread.__init__(self)
         self.CHUNK = 1024
         self.FORMAT = pyaudio.paInt16
@@ -130,7 +135,7 @@ class SpeechToText(Thread):
         self.silence_thresh=-44
         self.min_silence_len=100
 
-        self.url_asr = urlASR
+        self.url_asr = config['ASR']['url']
         self.ok = False
         self.stopFlag = False
 

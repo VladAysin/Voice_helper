@@ -27,6 +27,5 @@
 Требования:
 - Python 3.8.6 (64 bit)
 - Windows 10
-1) python setup.py
-2) Указать в файле Backend/config.txt нужные настроки. Важно указать ip адрес ASR.
-3) Запуск app.py
+1) pip install -r requirements.txt
+2) Запуск app.py
