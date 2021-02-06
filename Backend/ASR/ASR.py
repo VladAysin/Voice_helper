@@ -38,8 +38,9 @@ mytimer = MyTimer()
 
 
 def goCommand(text):
+    global RESULT
     print('command: ', text)
-    run_command(text, config)
+    RESULT = run_command(text, config)
 
 def createCommand(text):
     global ROMA
@@ -93,7 +94,7 @@ class Recognition(Thread):
         wav = open(self.url, 'rb')
         multiple_files = [('audio_blob', (self.url, wav, 'sound/wav'))]
         try:
-            r = requests.post(self.asr, files=multiple_files)
+            r = requests.post("http://10.11.17.13:8888/asr", files=multiple_files)
         except:
             print('error: ,{multiple_files} , {self.asr}')
         wav.close()
