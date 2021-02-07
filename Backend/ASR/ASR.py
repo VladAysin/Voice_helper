@@ -30,7 +30,7 @@ class MyTimer(Thread):
         Thread.__init__(self) 
     def run(self):
         global ROMA
-        time.sleep(20)
+        time.sleep(5)
         #print('END')
         ROMA = False
 
@@ -41,13 +41,21 @@ def goCommand(text):
     global RESULT
     print('command: ', text)
     RESULT = run_command(text, config)
+    print(RESULT)
+
+def setCommand(text):
+    print('command: ', text)
+    RESULT = run_command(text, config)
+    ROMA = True
+    OK = [True, 0]
+    return RESULT
 
 def createCommand(text):
     global ROMA
     global OK
     global DATA
 
-    if OK[1] >= 3 and DATA != []:
+    if OK[1] >= 1 and DATA != []:
         ROMA = False
         goCommand(' '.join(DATA))
         DATA = []
@@ -64,6 +72,7 @@ def getResult():
     r = RESULT
     if r:
         RESULT = ''
+        print(r)
         return [True, r]
     return [False, '']
 
@@ -94,9 +103,9 @@ class Recognition(Thread):
         wav = open(self.url, 'rb')
         multiple_files = [('audio_blob', (self.url, wav, 'sound/wav'))]
         try:
-            r = requests.post("http://10.11.17.13:8888/asr", files=multiple_files)
-        except:
-            print('error: ,{multiple_files} , {self.asr}')
+            r = requests.post("http://10.11.17.6:8888/asr", files=multiple_files)
+        except Exception as err:
+            print('error: ', err)
         wav.close()
         os.remove(self.url) 
         try:
@@ -105,10 +114,12 @@ class Recognition(Thread):
                 ROMA = True
                 mytimer.start()
             if ROMA:
+                print(result)
                 createCommand(result)
-            #print('F ===============',result)
+            print('F ===============',result)
         except:
-            print('error: {r}')
+            pass
+            #print('error: {r}')
         #self.text = ast.literal_eval(r.text)['r'][0]['response'][0]['text']
 
 class SpeechToText(Thread):
@@ -132,7 +143,7 @@ class SpeechToText(Thread):
         self.RATE = 44100
         self.RECORD_SECONDS = 0.5
 
-        self.silence_thresh=-44
+        self.silence_thresh=-38
         self.min_silence_len=100
 
         self.url_asr = config['ASR']['url']

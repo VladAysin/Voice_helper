@@ -73,7 +73,7 @@ def weather():
         r = get(f"http://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&appid={key}&lang=ru").json()
         answer = r["main"]
         answer.update(r["weather"][0])
-        print(answer)
+        # print(answer)
         return answer
     except Exception as err:
         e = sys.exc_info()[2]
@@ -106,6 +106,7 @@ def xls_analysis(command,path='./xls'):
         for info in os.walk(path):
             for xls_name in info[-1]:
                 try:
+                    #dict_spisok = {}
                     xls = pd.read_html(info[0]+'/'+xls_name)
                     df = pd.DataFrame(xls[0])
                     df.columns = df.loc[0,:].to_list()
@@ -186,12 +187,7 @@ def readPDF(path:str):
 
 
 def findInPDF(text,path):
-
-
-
-
     try:
- 
         files = [
             glob.glob(os.path.join(folder[0],"*.pdf"))
             for folder in os.walk(path)
@@ -204,7 +200,7 @@ def findInPDF(text,path):
         
         queue.join()
         if result:
-            print(result)      
+            return result 
     except Exception as err:
         e = sys.exc_info()[2]
         tbinfo = traceback.format_tb(e)[0]
