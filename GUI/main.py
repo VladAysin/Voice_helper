@@ -6,6 +6,7 @@ import os
 from kivy.config import Config
 from kivy.properties import ObjectProperty
 from kivymd.uix.label import MDLabel
+from kivymd.uix.list import OneLineListItem
 
 
 Config.set('graphics', 'width', '400')
@@ -24,21 +25,19 @@ class Screen(BoxLayout):
         super(Screen,self).__init__()
 
         self.chat = self.ids.chat
-        print(self.chat)
         for n in range(20):
-            # if n%2==0:
-            #     aling = "left"
-            # else: 
-            #     aling = "right"
-            align = "left" if n%2 else "right"
-            label = MDLabel(
-                            text = str(n),
-                            font_size="5",
-                            halign = align,
-                            valign="bottom",
-                            markup=True
-            )
-            self.chat.add_widget(label)
+            self.add_text_in_list(f"test {n}", n)
+
+    def add_text_in_list(self,data,idx):
+        align = "left" if idx%2 else "right"
+        label = MDLabel(
+            text = data,
+            halign=align,
+            size_hint_y=None,
+            height=55)
+
+        self.chat.add_widget(label)
+
 
 
 
