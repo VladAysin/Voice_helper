@@ -1,6 +1,6 @@
 from ASR.ASR import SpeechToText, getResult, getResultCommand, setCommand, SpeechToTextButton
-import websockets
-import asyncio
+# import websockets
+# import asyncio
 import time
 import json
 from threading import Thread

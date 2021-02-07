@@ -17,7 +17,7 @@
             pos_hint: {"x":1,"y":1 }
             canvas:
                 Color: 
-                    rgba: 1,0,0,1
+                    rgba: 1,0,1,0
 
                 RoundedRectangle:
                     pos: self.pos
@@ -43,6 +43,8 @@
             icon: "android"
             elevation_normal: 12
             on_press: root.say_hello()
+            source: "../images/icon.png"
+            
 
         MDFloatingActionButton:
             md_bg_color: "blue"

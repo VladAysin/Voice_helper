@@ -29,12 +29,18 @@ class WaitRecord(Thread):
     def run(self):
         # while not(Record.END):
         #     time.sleep(0.5)
+        Test = SpeechToTextButton()
         Test.start()
         while Test.result == '':
             time.sleep(0.5)
         print(Test.result)
-        self.handler.result = setCommand(Test.result)
-        self.handler.text_from_asr = Test.result                              
+        # self.handler.result = setCommand(Test.result)
+        # self.handler.text_from_asr = Test.result
+        self.handler.idx += 1
+        self.handler.add_text_in_list(Test.result)
+        self.handler.idx += 1
+        self.handler.add_text_in_list(str(setCommand(Test.result)))      
+
 
 class Screen(BoxLayout):
     def __init__(self):
@@ -73,8 +79,8 @@ class Screen(BoxLayout):
         self.text_field.text = ""
 
 
-    def add_text_in_list(self,data,idx):
-        align = "left" if idx%2 else "right"
+    def add_text_in_list(self,data):
+        align = "left" if self.idx%2 else "right"
         label = MDLabel(
             text = str(data),
             halign=align,
@@ -82,8 +88,8 @@ class Screen(BoxLayout):
             height=55)
 
         self.chat.add_widget(label)
-        
-    
+           
+
     def say_hello(self):
         some = WaitRecord(self)
         some.start()
@@ -98,5 +104,5 @@ class MainApp(MDApp):
 
 
 if __name__=="__main__":
-    Test = SpeechToTextButton()
     MainApp().run()
+    

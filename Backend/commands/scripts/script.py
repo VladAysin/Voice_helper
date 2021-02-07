@@ -38,8 +38,15 @@ class Find_file(Thread):
     def run(self):
         self.list_dirs = list(os.walk(self.drive))
         for info in self.list_dirs:
-            if self.file_name in info[-1]:
-                self.result = info[0]+ "\\" + self.file_name
+            for i in info[-1]:
+                if self.file_name.lower() in i.lower():
+                    self.result = info[0]+ "\\" + self.file_name
+                    break
+            try:
+                print(self.result)
+                break
+            except:
+                continue
         queue.task_done()
 
 
@@ -54,7 +61,7 @@ def date_time():
         'second': date.second
     }
     
-    return date_now
+    return f"{date.year}-{date.month}-{date.day} {date.hour}:{date.minute}:{date.second}"
 
 def helloworld(a, b):
     print("hello world", a, b)
@@ -111,6 +118,7 @@ def xls_analysis(command,path='./xls'):
                     df = pd.DataFrame(xls[0])
                     df.columns = df.loc[0,:].to_list()
                     df = df.loc[1:,:].reset_index(drop=True)
+                    df = df.loc[:1,:]
                     df['Состояние'] = pd.Series()
                     df['Состояние'] = np.random.choice(len(status),len(df))
                     if 'список' in command:
@@ -141,8 +149,18 @@ def find_file_on_fs(file_name,path=''):
         drives = [path]
     dict_drives = {}
     try:
+        some = ""
+        if type(file_name) == list:
+            for i in file_name:
+                some += i
+                if file_name.index(i) == len(file_name)-1:
+                    pass
+                else:
+                    some += '\n'
+        else:
+            some = file_name
         for path in drives:
-            dict_drives.update({path:Find_file(path,file_name)})
+            dict_drives.update({path:Find_file(path,some)})
             queue.put(dict_drives[path].start())
     except Exception as err:
         e = sys.exc_info()[2]
