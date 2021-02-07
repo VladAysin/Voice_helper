@@ -7,9 +7,11 @@ from kivy.config import Config
 from kivy.properties import ObjectProperty
 from kivymd.uix.label import MDLabel
 from ASR.ASR import SpeechToText, getResult, getResultCommand, setCommand, SpeechToTextButton
+from kivymd.uix.textfield import MDTextField
 import time
 import json
 from threading import Thread
+from kivymd.uix.button import MDIconButton
 
 
 Config.set('graphics', 'width', '400')
@@ -41,13 +43,40 @@ class Screen(BoxLayout):
         self.result = ''
         self.text_from_asr = ''
         self.chat = self.ids.chat
-        for n in range(20):
-            self.add_text_in_list(f"test {n}", n)
+        self.count = 0
+        self.hide_text_input = True
+        
+    def add_count(self):
+        self.add_text_in_list(self.count,self.count)
+        self.count+=1
+    
+    def textInput(self):
+        self.hide_text_input = not self.hide_text_input
+        if not self.hide_text_input:
+            self.layout = BoxLayout(orientation='horizontal',size=(400,10))
+            self.text_field = MDTextField(
+                    hint_text="Введите команду", multiline=False
+                )
+            self.but = MDIconButton(icon="send" )
+            self.but.bind(on_press=self.move_data)
+            self.layout.add_widget(self.text_field)
+            self.layout.add_widget(self.but)
+
+
+            self.add_widget(self.layout)
+        else:
+            self.remove_widget(self.layout)
+
+    def move_data(self,btn):
+        text = self.text_field.text
+        self.add_text_in_list(text,self.count)
+        self.text_field.text = ""
+
 
     def add_text_in_list(self,data,idx):
         align = "left" if idx%2 else "right"
         label = MDLabel(
-            text = data,
+            text = str(data),
             halign=align,
             size_hint_y=None,
             height=55)
@@ -69,5 +98,5 @@ class MainApp(MDApp):
 
 
 if __name__=="__main__":
-    MainApp().run()
     Test = SpeechToTextButton()
+    MainApp().run()

@@ -3,8 +3,7 @@
 <Screen>:
     orientation: 'vertical'
     size_hint: (1,1)
-    MDFlatButton:
-        id:button
+    
             
 
     ScrollView:
@@ -27,12 +26,10 @@
 
             MDList:
                 id: chat
-
     BoxLayout:
-
         orientation:"horizontal"
-        size_hint_y: .2
-  
+        size_hint_y: .1
+        
         
         canvas:
             Color: 
@@ -41,15 +38,17 @@
                 pos: self.pos
                 size: self.size
                 radius: [25, 0, 0, 0]
-
         MDFloatingActionButton:
+            pos_x: 50
             icon: "android"
             elevation_normal: 12
             on_press: root.say_hello()
 
         MDFloatingActionButton:
+            md_bg_color: "blue"
             icon: "keyboard"
-            halign:"right"
+            on_press: root.textInput()
+    
                 
 
     
