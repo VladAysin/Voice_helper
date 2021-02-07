@@ -52,9 +52,6 @@ class Screen(BoxLayout):
         self.idx = 0
         self.hide_text_input = True
         
-    def add_count(self):
-        self.add_text_in_list(self.count,self.count)
-        self.count+=1
     
     def textInput(self):
         self.hide_text_input = not self.hide_text_input
