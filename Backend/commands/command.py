@@ -53,10 +53,10 @@ def run_command(command, config):
     file_found = ['файл']
     for word in lemmatizing(file_found):
         if word in command:
-            return find_file_on_fs('flag.txt')
+            return find_file_on_fs('письма')
 
     try:
         command = find_command(command,commands)
         return command() 
     except:
-        return {"type": "text", "data": "Команда не может быть выполнена"}
+        return "Команда не может быть выполнена"

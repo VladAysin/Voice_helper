@@ -281,6 +281,7 @@ class SpeechToTextButton(Thread):
         multiple_files = [('audio_blob', (url, wav, 'sound/wav'))]
         try:
             r = requests.post("http://10.11.17.6:8888/asr", files=multiple_files)
+            
         except Exception as err:
             print('error: ', err)
         wav.close()
@@ -290,3 +291,4 @@ class SpeechToTextButton(Thread):
         except Exception as err:
             self.result = 'Error'
             print('error: ',err)
+        r.close()

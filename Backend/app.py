@@ -27,12 +27,18 @@ class WaitRecord(Thread):
     def run(self):
         # while not(Record.END):
         #     time.sleep(0.5)
+        Test = SpeechToTextButton()
         Test.start()
         while Test.result == '':
             time.sleep(0.5)
         print(Test.result)
-        self.handler.result = setCommand(Test.result)
-        self.handler.text_from_asr = Test.result                              
+        # self.handler.result = setCommand(Test.result)
+        # self.handler.text_from_asr = Test.result
+        self.handler.idx += 1
+        self.handler.add_text_in_list(Test.result)
+        self.handler.idx += 1
+        self.handler.add_text_in_list(str(setCommand(Test.result)))      
+
 
 class Screen(BoxLayout):
     def __init__(self):
@@ -41,11 +47,12 @@ class Screen(BoxLayout):
         self.result = ''
         self.text_from_asr = ''
         self.chat = self.ids.chat
-        for n in range(20):
-            self.add_text_in_list(f"test {n}", n)
+        self.idx = 0
+        # for n in range(20):
+        #     self.add_text_in_list(f"test {n}", n)
 
-    def add_text_in_list(self,data,idx):
-        align = "left" if idx%2 else "right"
+    def add_text_in_list(self,data):
+        align = "left" if self.idx%2 else "right"
         label = MDLabel(
             text = data,
             halign=align,
@@ -53,19 +60,7 @@ class Screen(BoxLayout):
             height=55)
 
         self.chat.add_widget(label)
-            # if n%2==0:
-            #     aling = "left"
-            # else: 
-            #     aling = "right"
-        align = "left" if n%2 else "right"
-        label = MDLabel(
-                        text = str(n),
-                        font_size="5",
-                        halign = align,
-                        valign="bottom",
-                        markup=True
-        )
-        self.chat.add_widget(label)
+           
 
     def say_hello(self):
         some = WaitRecord(self)
@@ -82,4 +77,4 @@ class MainApp(MDApp):
 
 if __name__=="__main__":
     MainApp().run()
-    Test = SpeechToTextButton()
+    
