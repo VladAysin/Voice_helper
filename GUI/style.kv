@@ -1,0 +1,45 @@
+<Screen>:
+    orientation: 'vertical'
+    size_hint: (1,1)
+    MDFlatButton:
+        id:button
+            
+
+    ScrollView:
+        id:scrollView
+        do_scroll_x:False
+        do_scroll_y:True
+        size_hint_y: .8
+
+        BoxLayout:
+            orientation: 'vertical'
+            pos_hint: {"x":1,"y":1 }
+            canvas:
+                Color: 
+                    rgba: 1,0,0,1
+
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [25, 0, 0, 0]
+
+            ScrollView:
+                BoxLayout:
+                    id: chat
+                    orientation:"vertical"
+
+    BoxLayout:
+
+        orientation:"horizontal"
+        size_hint_y: .2
+
+
+        canvas:
+            Color: 
+                rgba: 1,0,1,1
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [25, 0, 0, 0]
+
+            
