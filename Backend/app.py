@@ -41,8 +41,18 @@ class Screen(BoxLayout):
         self.result = ''
         self.text_from_asr = ''
         self.chat = self.ids.chat
-        print(self.chat)
         for n in range(20):
+            self.add_text_in_list(f"test {n}", n)
+
+    def add_text_in_list(self,data,idx):
+        align = "left" if idx%2 else "right"
+        label = MDLabel(
+            text = data,
+            halign=align,
+            size_hint_y=None,
+            height=55)
+
+        self.chat.add_widget(label)
             # if n%2==0:
             #     aling = "left"
             # else: 
