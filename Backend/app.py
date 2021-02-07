@@ -52,6 +52,7 @@ class Screen(BoxLayout):
         self.count = 0
         self.hide_text_input = True
         
+        self.idx = 0
     def add_count(self):
         self.add_text_in_list(self.count,self.count)
         self.count+=1
@@ -75,7 +76,10 @@ class Screen(BoxLayout):
 
     def move_data(self,btn):
         text = self.text_field.text
-        self.add_text_in_list(text,self.count)
+        self.idx +=1
+        self.add_text_in_list(text)
+        self.idx +=1
+        self.add_text_in_list(str(setCommand(text)))
         self.text_field.text = ""
 
 

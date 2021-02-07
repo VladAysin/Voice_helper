@@ -81,7 +81,8 @@ def weather():
         answer = r["main"]
         answer.update(r["weather"][0])
         # print(answer)
-        return answer
+        string_answ = f"Температура: {answer['temp']}, Чувствуется как: {answer['feels_like']}, Давление: {answer['pressure']}"
+        return string_answ
     except Exception as err:
         e = sys.exc_info()[2]
         tbinfo = traceback.format_tb(e)[0]
