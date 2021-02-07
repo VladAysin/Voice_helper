@@ -6,6 +6,10 @@ import os
 from kivy.config import Config
 from kivy.properties import ObjectProperty
 from kivymd.uix.label import MDLabel
+from ASR.ASR import SpeechToText, getResult, getResultCommand, setCommand
+import time
+import json
+from threading import Thread
 
 
 Config.set('graphics', 'width', '400')
@@ -22,7 +26,7 @@ class Screen(BoxLayout):
     def __init__(self):
 
         super(Screen,self).__init__()
-
+        self.text_from_asr = ''
         self.chat = self.ids.chat
         print(self.chat)
         for n in range(20):
@@ -39,6 +43,9 @@ class Screen(BoxLayout):
                             markup=True
             )
             self.chat.add_widget(label)
+    
+    def say_hello(self):
+        print("jopa")
 
 
 

@@ -6,6 +6,7 @@ import json
 from threading import Thread
 
 
+
 Record = SpeechToText()
 Record.start()
 #setCommand('в документе для моделирования реактора')
