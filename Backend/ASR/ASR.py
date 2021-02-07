@@ -121,7 +121,6 @@ class Recognition(Thread):
             pass
             #print('error: {r}')
         #self.text = ast.literal_eval(r.text)['r'][0]['response'][0]['text']
-
 class SpeechToText(Thread):
     '''
     Speech To Text function by Rusil
@@ -149,6 +148,8 @@ class SpeechToText(Thread):
         self.url_asr = config['ASR']['url']
         self.ok = False
         self.stopFlag = False
+
+        self.END = False
 
     def run(self):
         global ROMA
@@ -236,7 +237,56 @@ class SpeechToText(Thread):
                 else:
                     ok = 0
                     split = 1
-    
         stream.stop_stream()
         stream.close()
         p.terminate()
+        self.END = True
+
+class SpeechToTextButton(Thread):
+    def __init__(self):
+        Thread.__init__(self) 
+        self.result = ''
+    def run(self):
+        CHUNK = 1024
+        FORMAT = pyaudio.paInt16
+        CHANNELS = 1
+        RATE = 44100
+        RECORD_SECONDS = 4
+        p = pyaudio.PyAudio()
+
+        print("Recording...")
+        stream = p.open(format=FORMAT,
+                    channels=CHANNELS,
+                    rate=RATE,
+                    input=True,
+                    frames_per_buffer=CHUNK)
+
+        #print("sleep...")
+        frames = []
+        for _ in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
+            data = stream.read(CHUNK)
+            frames.append(data)
+
+        url = 'ASR/audio/'+str(randrange(64000))+'.wav'
+
+        wf = wave.open(url, 'wb')
+        wf.setnchannels(CHANNELS)
+        wf.setsampwidth(p.get_sample_size(FORMAT))
+        wf.setframerate(RATE)
+        wf.writeframes(b''.join(frames))
+        wf.close()
+
+
+        wav = open(url, 'rb')
+        multiple_files = [('audio_blob', (url, wav, 'sound/wav'))]
+        try:
+            r = requests.post("http://10.11.17.6:8888/asr", files=multiple_files)
+        except Exception as err:
+            print('error: ', err)
+        wav.close()
+        os.remove(url) 
+        try:
+            self.result = ast.literal_eval(r.text)['r'][0]['response'][0]['text']
+        except Exception as err:
+            self.result = 'Error'
+            print('error: ',err)
