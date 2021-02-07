@@ -35,7 +35,7 @@ def run_command(command, config):
         return commands
     global commands
 
-    pdffind = ['в', 'документе']
+    pdffind = ['документе']
     for word in lemmatizing(pdffind):
         some_command = lemmatizing(command.split(' '))
         if word in some_command:

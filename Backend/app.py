@@ -60,13 +60,14 @@ class Screen(BoxLayout):
             self.text_field = MDTextField(
                     hint_text="Введите команду", multiline=False
                 )
-            self.but = MDIconButton(icon="send" )
+            self.but = MDIconButton(icon="send")
             self.but.bind(on_press=self.move_data)
+            self.text_field.bind(on_text_validate=self.move_data)
             self.layout.add_widget(self.text_field)
             self.layout.add_widget(self.but)
-
-
+            
             self.add_widget(self.layout)
+
         else:
             self.remove_widget(self.layout)
 
