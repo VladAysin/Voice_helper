@@ -49,17 +49,14 @@ class Screen(BoxLayout):
         self.result = ''
         self.text_from_asr = ''
         self.chat = self.ids.chat
-        self.count = 0
+        self.idx = 0
         self.hide_text_input = True
         
-    def add_count(self):
-        self.add_text_in_list(self.count,self.count)
-        self.count+=1
     
     def textInput(self):
         self.hide_text_input = not self.hide_text_input
         if not self.hide_text_input:
-            self.layout = BoxLayout(orientation='horizontal',size=(400,10))
+            self.layout = BoxLayout(orientation='horizontal',size_hint_y=.1)
             self.text_field = MDTextField(
                     hint_text="Введите команду", multiline=False
                 )
@@ -75,8 +72,12 @@ class Screen(BoxLayout):
 
     def move_data(self,btn):
         text = self.text_field.text
-        self.add_text_in_list(text,self.count)
-        self.text_field.text = ""
+        if text:
+            self.idx+=1
+            self.add_text_in_list(text)
+            self.idx+=1
+            self.text_field.text = ""
+            self.add_text_in_list(setCommand(text))
 
 
     def add_text_in_list(self,data):
