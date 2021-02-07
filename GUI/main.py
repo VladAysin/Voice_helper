@@ -25,16 +25,17 @@ class Screen(BoxLayout):
 
         self.chat = self.ids.chat
         print(self.chat)
-        for n in range(7):
-            if n%2:
-                aling = "left"
-            else: 
-                aling = "right"
+        for n in range(20):
+            # if n%2==0:
+            #     aling = "left"
+            # else: 
+            #     aling = "right"
+            align = "left" if n%2 else "right"
             label = MDLabel(
                             text = str(n),
                             font_size="5",
-                            halign = "right",
-                            valight="top",
+                            halign = align,
+                            valign="bottom",
                             markup=True
             )
             self.chat.add_widget(label)
