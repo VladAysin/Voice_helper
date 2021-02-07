@@ -53,19 +53,7 @@ class Screen(BoxLayout):
             height=55)
 
         self.chat.add_widget(label)
-            # if n%2==0:
-            #     aling = "left"
-            # else: 
-            #     aling = "right"
-            align = "left" if n%2 else "right"
-            label = MDLabel(
-                            text = str(n),
-                            font_size="5",
-                            halign = align,
-                            valign="bottom",
-                            markup=True
-            )
-            self.chat.add_widget(label)
+        
     
     def say_hello(self):
         some = WaitRecord(self)
