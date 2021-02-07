@@ -6,7 +6,7 @@ import os
 from kivy.config import Config
 from kivy.properties import ObjectProperty
 from kivymd.uix.label import MDLabel
-from ASR.ASR import SpeechToText, getResult, getResultCommand, setCommand
+from ASR.ASR import SpeechToText, getResult, getResultCommand, setCommand, SpeechToTextButton
 import time
 import json
 from threading import Thread
@@ -20,12 +20,25 @@ Config.write()
 
 Builder.load_file(os.path.join(os.path.dirname(os.path.abspath(__file__)),"style.kv"))
                                 
-                                    
+class WaitRecord(Thread):
+    def __init__(self,handler):
+        Thread.__init__(self)
+        self.handler = handler
+    def run(self):
+        # while not(Record.END):
+        #     time.sleep(0.5)
+        Test.start()
+        while Test.result == '':
+            time.sleep(0.5)
+        print(Test.result)
+        self.handler.result = setCommand(Test.result)
+        self.handler.text_from_asr = Test.result                              
 
 class Screen(BoxLayout):
     def __init__(self):
 
         super(Screen,self).__init__()
+        self.result = ''
         self.text_from_asr = ''
         self.chat = self.ids.chat
         print(self.chat)
@@ -45,7 +58,8 @@ class Screen(BoxLayout):
             self.chat.add_widget(label)
     
     def say_hello(self):
-        print("jopa")
+        some = WaitRecord(self)
+        some.start()
 
 
 
@@ -58,3 +72,4 @@ class MainApp(MDApp):
 
 if __name__=="__main__":
     MainApp().run()
+    Test = SpeechToTextButton()
